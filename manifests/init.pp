@@ -1,48 +1,62 @@
-# Class: plex
-# ===========================
-#
-# Full description of class plex here.
-#
-# Parameters
-# ----------
-#
-# Document parameters here.
-#
-# * `sample parameter`
-# Explanation of what this parameter affects and what it defaults to.
-# e.g. "Specify one or more upstream ntp servers as an array."
-#
-# Variables
-# ----------
-#
-# Here you should define a list of variables that this module would require.
-#
-# * `sample variable`
-#  Explanation of how this variable affects the function of this class and if
-#  it has a default. e.g. "The parameter enc_ntp_servers must be set by the
-#  External Node Classifier as a comma separated list of hostnames." (Note,
-#  global variables should be avoided in favor of class parameters as
-#  of Puppet 2.6.)
-#
-# Examples
-# --------
-#
-# @example
-#    class { 'plex':
-#      servers => [ 'pool.ntp.org', 'ntp.local.company.com' ],
-#    }
-#
-# Authors
-# -------
-#
-# Author Name <author@domain.com>
-#
-# Copyright
-# ---------
-#
-# Copyright 2016 Your name here, unless otherwise noted.
-#
-class plex {
+# Install the Plex server.
+class plex (
+  $app_version    = '0.9.16.6.1993-5089475',
+  ) {
 
+  Exec {
+    path => ['/sbin', '/bin', '/usr/sbin', '/usr/bin'],
+  }
+  
+
+  # Download & Install (Ubuntu/Debian)
+  if ($::operatingsystem == 'Ubuntu' or $::operatingsystem == 'Debian') {
+
+    # Select the appropiate download URL for this distribution and architecture
+    # Note that Debian technically isn't supported, so we just use the Ubuntu package
+    $download_url = "https://downloads.plex.tv/plex-media-server/${app_version}/plexmediaserver_${app_version}_${::architecture}.deb"
+
+    # Download and install the software.
+    exec { 'plex_download':
+      creates   => "/tmp/plexmediaserver-${app_version}.deb",
+      command   => "wget -nv ${download_url} -O /tmp/plexmediaserver-${app_version}.deb",
+      unless    => "dpkg -s plexmediaserver | grep -q \"Version: ${app_version}\"", # Download new version if not already installed.
+      logoutput => true,
+      notify    => Exec['plex_install'],
+    }
+
+    exec { 'plex_install':
+      # Ideally we'd use "apt-get install package.deb" but this only become
+      # available in apt 1.1 and later. Hence we do a bit of a hack, which is
+      # to install the deb and then fix the deps with apt-get -y -f install.
+      # TODO: When Ubuntu 16.04 is out, check if we can migrate to the better approach
+      command     => "bash -c 'dpkg -i /tmp/plexmediaserver-${app_version}.deb; apt-get -y -f install'",
+      require     => Exec['plex_download'],
+      logoutput   => true,
+      refreshonly => true,
+    }
+  }
+
+
+  # Download & Install (Fedora/CentOS)
+  if ($::operatingsystem == 'Fedora' or $::operatingsystem == 'CentOS') {
+    $download_url = "https://downloads.plex.tv/plex-media-server/${app_version}/plexmediaserver-${app_version}.${::architecture}.rpm"
+
+    # TODO: Implement
+    fail('Fedora/CentOS support not yet implemented')
+  }
+
+  if ($download_url == "") {
+    # If we didn't get set, we aren't supported.
+    fail('plex does not support this platform')
+  }
+
+
+  # Ensure the daemon is running and configured to launch at boot
+  service { 'plexmediaserver':
+    ensure    => 'running',
+    enable    => true,
+    require   => Exec['plex_install'],
+  }
 
 }
+# vi:smartindent:tabstop=2:shiftwidth=2:expandtab:

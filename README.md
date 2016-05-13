@@ -1,79 +1,59 @@
-# plex
-
-#### Table of Contents
-
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with plex](#setup)
-    * [What plex affects](#what-plex-affects)
-    * [Setup requirements](#setup-requirements)
-    * [Beginning with plex](#beginning-with-plex)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+# puppet-plex
 
 ## Overview
 
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
+Installs the [Plex Media Server](https://plex.tv) for Linux.
 
-## Module Description
+## Configuration
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
+Currently this module is limited to installed a specific version of the server:
 
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
+    class { '::plex':
+      app_version => '0.9.16.6.1993-5089475', # pin specific version
+    }
 
-## Setup
+If left unset, `app_version` will be updated semi-frequently to the latest
+version offered by Plex. If this isn't something you'd like, please pin
+the version either using the syntax above, or by using Hiera.
 
-### What plex affects
+This module does not configure any kind of firewall, it is *strongly*
+recommended that you firewall this system heavily.
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
 
-### Setup Requirements **OPTIONAL**
+## Requirements
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+One of the supported GNU/Linux distributions:
+* Ubuntu
+* Debian
 
-### Beginning with plex
+PRs welcome for CentOS, Fedora, MacOS or FreeBSD.
 
-The very basic steps needed for a user to get the module up and running.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
-
-## Usage
-
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
-
-## Reference
-
-Here, list the classes, types, providers, facts, etc contained in your module.
-This section should include all of the under-the-hood workings of your module so
-people know what the module is touching on their system but don't need to mess
-with things. (We are working on automating this section!)
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+Plex don't make the software available as a proper APT repo, so we can't
+(easily) do things like check for the latest version - so we currently pin to
+specific versions.
 
-## Development
+The downloads of their package come direct from their website, if they change
+their download methodology or packaging approach, this could break in future.
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
 
-## Release Notes/Contributors/Etc **Optional**
 
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+## Contributions
+
+All contributions are welcome via Pull Requests including documentation fixes
+or compatibility fixes for supporting other distributions (or other operating
+systems).
+
+
+## License
+
+This module is licensed under the Apache License, Version 2.0 (the "License").
+See the `LICENSE` or http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
