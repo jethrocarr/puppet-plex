@@ -16,8 +16,9 @@ If left unset, `app_version` will be updated semi-frequently to the latest
 version offered by Plex. If this isn't something you'd like, please pin
 the version either using the syntax above, or by using Hiera.
 
-This module does not configure any kind of firewall, it is *strongly*
-recommended that you firewall this system heavily.
+A firewall is configured automatically using the `puppetlabs/firewall` module,
+you can disable this by setting `manage_firewall_v4` and `manage_firewall_v6`
+to `true` or `false`.
 
 
 ## Requirements

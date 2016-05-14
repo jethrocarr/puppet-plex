@@ -1,6 +1,8 @@
 # Install the Plex server.
 class plex (
-  $app_version    = '0.9.16.6.1993-5089475',
+  $app_version        = '0.9.16.6.1993-5089475',
+  $manage_firewall_v4 = true,
+  $manage_firewall_v6 = true,
   ) {
 
   Exec {
@@ -58,5 +60,60 @@ class plex (
     require   => Exec['plex_install'],
   }
 
+  
+  if ($manage_firewall_v4) {
+    firewall { '100 V4 Permit Plex Web UI':
+      provider => 'iptables',
+      proto    => 'tcp',
+      dport    => '32400',
+      action   => 'accept',
+    }
+
+    firewall { '100 V4 Permit Plex DLNA Server TCP':
+      provider => 'iptables',
+      proto    => 'tcp',
+      dport    => '32469',
+      action   => 'accept',
+    }
+
+    firewall { '100 V4 Permit Plex DLNA Server UDP':
+      provider => 'iptables',
+      proto    => 'udp',
+      dport    => '1900',
+      action   => 'accept',
+    }
+
+    firewall { '100 V4 Permit Plex Home Theatre via Companion':
+      provider => 'iptables',
+      proto    => 'tcp',
+      dport    => '3005',
+      action   => 'accept',
+    }
+
+    firewall { '100 V4 Permit Plex Bonjour Avahi discovery':
+      provider => 'iptables',
+      proto    => 'udp',
+      dport    => '5353',
+      action   => 'accept',
+    }
+
+    firewall { '100 V4 Permit Plex via Roku Companion':
+      provider => 'iptables',
+      proto    => 'tcp',
+      dport    => '8324',
+      action   => 'accept',
+    }
+
+    firewall { '100 V4 Permit Plex for GDM network discovery':
+      provider => 'iptables',
+      proto    => 'udp',
+      dport    => '32410-32414',
+      action   => 'accept',
+    }
+  }
+
+  #  if ($manage_firewall_v6) {
+  #    # TODO
+  #  }
 }
 # vi:smartindent:tabstop=2:shiftwidth=2:expandtab:
