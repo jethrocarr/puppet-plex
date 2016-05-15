@@ -112,8 +112,55 @@ class plex (
     }
   }
 
-  #  if ($manage_firewall_v6) {
-  #    # TODO
-  #  }
+  if ($manage_firewall_v6) {
+    firewall { '100 V6 Permit Plex Web UI':
+      provider => 'ip6tables',
+      proto    => 'tcp',
+      dport    => '32400',
+      action   => 'accept',
+    }
+
+    firewall { '100 V6 Permit Plex DLNA Server TCP':
+      provider => 'ip6tables',
+      proto    => 'tcp',
+      dport    => '32469',
+      action   => 'accept',
+    }
+
+    firewall { '100 V6 Permit Plex DLNA Server UDP':
+      provider => 'ip6tables',
+      proto    => 'udp',
+      dport    => '1900',
+      action   => 'accept',
+    }
+
+    firewall { '100 V6 Permit Plex Home Theatre via Companion':
+      provider => 'ip6tables',
+      proto    => 'tcp',
+      dport    => '3005',
+      action   => 'accept',
+    }
+
+    firewall { '100 V6 Permit Plex Bonjour Avahi discovery':
+      provider => 'ip6tables',
+      proto    => 'udp',
+      dport    => '5353',
+      action   => 'accept',
+    }
+
+    firewall { '100 V6 Permit Plex via Roku Companion':
+      provider => 'ip6tables',
+      proto    => 'tcp',
+      dport    => '8324',
+      action   => 'accept',
+    }
+
+    firewall { '100 V6 Permit Plex for GDM network discovery':
+      provider => 'ip6tables',
+      proto    => 'udp',
+      dport    => '32410-32414',
+      action   => 'accept',
+    }
+  }
 }
 # vi:smartindent:tabstop=2:shiftwidth=2:expandtab:
