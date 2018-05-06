@@ -1,6 +1,6 @@
 # Install the Plex server.
 class plex (
-  $app_version        = '1.9.2.4285-9f65b88ae',
+  $app_version        = '1.12.3.4973-215c28d86',
   $manage_firewall_v4 = true,
   $manage_firewall_v6 = true,
   ) {
