@@ -15,7 +15,7 @@ class plex (
 
     # Select the appropiate download URL for this distribution and architecture
     # Note that Debian technically isn't supported, so we just use the Ubuntu package
-    $download_url = "https://downloads.plex.tv/plex-media-server/${app_version}/plexmediaserver_${app_version}_${::architecture}.deb"
+    $download_url = "https://downloads.plex.tv/plex-media-server-new/${app_version}/debian/plexmediaserver_${app_version}_${::architecture}.deb"
 
     # Download and install the software.
     exec { 'plex_download':
